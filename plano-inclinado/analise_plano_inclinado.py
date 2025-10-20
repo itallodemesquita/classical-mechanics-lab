@@ -1,49 +1,47 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import os
 
-# 1. Carregar os dados do arquivo CSV
+DIRETORIO_DO_SCRIPT = os.path.dirname(os.path.abspath(__file__))
+CAMINHO_DO_ARQUIVO_CSV = os.path.join(DIRETORIO_DO_SCRIPT, 'dados_plano_inclinado.csv')
+
 try:
-    df = pd.read_csv('dados_plano_inclinado.csv')
+    # 1. Carregar os dados do arquivo CSV
+    df = pd.read_csv(CAMINHO_DO_ARQUIVO_CSV)
 
     # 2. Limpeza e preparação dos dados
-    
     df = df.rename(columns=lambda column: column.strip())
-
-    # Converte as colunas de texto para números para que possam ser plotadas.
-    # 'errors='coerce'' transforma qualquer valor que não seja um número em 'NaN' (Not a Number).
     for col in ['POSIÇÃO (x)', 'INTERVALO DE TEMPO (∆t)', 'VEL. MÉDIA (v)']:
         df[col] = pd.to_numeric(df[col], errors='coerce')
-
-    # Remove linhas que contenham valores não numéricos para evitar erros no gráfico.
     df.dropna(inplace=True)
 
-    # 3. Criar o Gráfico de Posição vs. Tempo
-    plt.figure(figsize=(10, 6)) # Define o tamanho da figura do gráfico
-    plt.scatter(df['INTERVALO DE TEMPO (∆t)'], df['POSIÇÃO (x)'], color='blue', label='Dados Experimentais')
+
+    # 3. Criar o Gráfico de Posição vs. Tempo (gráfico de linha)
+    plt.figure(figsize=(10, 6))
+
+    plt.plot(df['INTERVALO DE TEMPO (∆t)'], df['POSIÇÃO (x)'], color='blue', marker='o', linestyle='-', label='Dados Experimentais')
     plt.title('Posição versus Tempo', fontsize=16)
     plt.xlabel('Tempo (s)', fontsize=12)
     plt.ylabel('Posição (cm)', fontsize=12)
-    plt.grid(True) # Adiciona uma grade ao fundo para facilitar a leitura
+    plt.grid(True)
     plt.legend()
-    # Salva o gráfico como uma imagem PNG.
-    plt.savefig('posicao_vs_tempo.png')
-    print("Gráfico 'posicao_vs_tempo.png' foi salvo com sucesso.")
+    plt.savefig(os.path.join(DIRETORIO_DO_SCRIPT, 'posicao_vs_tempo_linha.png')) # Nome do arquivo alterado para não sobrescrever o antigo
+    print("Gráfico 'posicao_vs_tempo_linha.png' foi salvo com sucesso.")
 
-
-    # 4. Criar o Gráfico de Velocidade vs. Tempo
-    plt.figure(figsize=(10, 6)) # Cria uma nova figura para o segundo gráfico
-    plt.scatter(df['INTERVALO DE TEMPO (∆t)'], df['VEL. MÉDIA (v)'], color='red', label='Dados Experimentais')
+    # 4. Criar o Gráfico de Velocidade vs. Tempo (gráfico de linha)
+    plt.figure(figsize=(10, 6))
+    
+    plt.plot(df['INTERVALO DE TEMPO (∆t)'], df['VEL. MÉDIA (v)'], color='red', marker='o', linestyle='-', label='Dados Experimentais')
     plt.title('Velocidade Média versus Tempo', fontsize=16)
     plt.xlabel('Tempo (s)', fontsize=12)
     plt.ylabel('Velocidade Média (cm/s)', fontsize=12)
     plt.grid(True)
     plt.legend()
-    # Salva o segundo gráfico como uma imagem PNG.
-    plt.savefig('velocidade_vs_tempo.png')
-    print("Gráfico 'velocidade_vs_tempo.png' foi salvo com sucesso.")
+    plt.savefig(os.path.join(DIRETORIO_DO_SCRIPT, 'velocidade_vs_tempo_linha.png')) # Nome do arquivo alterado
+    print("Gráfico 'velocidade_vs_tempo_linha.png' foi salvo com sucesso.")
 
 
 except FileNotFoundError:
-    print("Erro: O arquivo 'dados_plano_inclinado.csv' não foi encontrado.")
+    print(f"Erro: O arquivo não foi encontrado no caminho: {CAMINHO_DO_ARQUIVO_CSV}")
 except Exception as e:
     print(f"Ocorreu um erro inesperado: {e}")
